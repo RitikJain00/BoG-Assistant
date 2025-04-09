@@ -55,14 +55,15 @@ const Login = () => {
                         padding: '30px', 
                         boxShadow: "10px 10px 20px #000",
                         borderRadius: "10px", 
-                        border: "none"
+                        border: "none",
                     }}
                 >
                     <Box 
                         sx={{ 
                             display: 'flex', 
                             flexDirection: 'column', 
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                           
                         }}
                     >
                         {/* Login Header */}
@@ -71,6 +72,7 @@ const Login = () => {
                             textAlign="center" 
                             padding={2} 
                             fontWeight={600}
+                            color=' rgb(76, 159, 192)'
                         >
                             Login
                         </Typography>
@@ -88,8 +90,8 @@ const Login = () => {
                                 mt: 2, 
                                 width: '400px', 
                                 borderRadius: '5', 
-                                bgcolor: '#00fffc',
-                                ":hover": { bgcolor: 'white', color: 'black' }
+                                bgcolor: ' rgb(128, 206, 236)',
+                                ":hover": { bgcolor: ' rgb(65, 134, 161)', color: 'white' }
                             }} 
                             endIcon={<IoIosLogIn />}
                         >

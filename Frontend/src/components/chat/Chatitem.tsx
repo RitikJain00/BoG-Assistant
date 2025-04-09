@@ -1,37 +1,50 @@
-import { Box, Avatar, Typography } from "@mui/material";
-import React from "react";
-import { useAuth } from "../../context/AuthContext";
+import { Box, Avatar, Typography } from '@mui/material';
+import React from 'react';
+import { useAuth } from '../../context/AuthContext';
 
-// Define the type for role (can be reused)
-type RoleType = "user" | "assistant";
+const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistant' }) => {
+    const auth = useAuth();
 
-const ChatItem = ({ content, role }: { content: string; role: RoleType }) => {
-  const auth = useAuth();
-  
-  // Extract user initials safely
-  const userName = auth?.User?.name || "User";
-  const nameParts = userName.split(" ");
-  const initials = nameParts[0][0] + (nameParts[1]?.[0] || ""); // Avoids errors if no last name
-
-  return role === "assistant" ? (
-    <Box sx={{ display: "flex", p: 2, bgcolor: "#004d5612", my: 2, gap: 3, borderRadius: 2 }}>
-      <Avatar sx={{ ml: "0" }}>
-        <img src="openai.png" width={"30px"} alt="OpenAI Logo" />
-      </Avatar>
-      <Box>
-        <Typography fontSize={"20px"}>{content}</Typography>
-      </Box>
-    </Box>
-  ) : (
-    <Box sx={{ display: "flex", p: 2, bgcolor: "#004d56", gap: 3, borderRadius: 2 }}>
-      <Avatar sx={{ ml: "0", bgcolor: "black", color: "white" }}>
-        {initials.toUpperCase()} 
-      </Avatar>
-      <Box>
-        <Typography fontSize={"20px"}>{content}</Typography>
-      </Box>
-    </Box>
-  );
+    return role === 'assistant' ? (
+        // Assistant's message (icon on left)
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 1 }}>
+            <Avatar sx={{ width: 30, height: 30 }}>
+                <img src="openai.png" width="30px" alt="AI" />
+            </Avatar>
+            <Box
+                sx={{
+                    maxWidth: '70%',
+                    padding: '10px 15px',
+                    borderRadius: '15px',
+                    backgroundColor: '#f1f0f0', // Light gray background
+                    borderTopLeftRadius: '0px',
+                    boxShadow: '0px 1px 3px rgba(0,0,0,0.2)',
+                }}
+            >
+                <Typography fontSize="16px" color="black">{content}</Typography>
+            </Box>
+        </Box>
+    ) : (
+        // User's message (icon on right)
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, my: 1 }}>
+            <Box
+                sx={{
+                    maxWidth: '70%',
+                    padding: '10px 15px',
+                    borderRadius: '15px',
+                    backgroundColor: 'white', // White background for user
+                    borderTopRightRadius: '0px',
+                    boxShadow: '0px 1px 3px rgba(0,0,0,0.2)',
+                }}
+            >
+                <Typography fontSize="16px" color="black">{content}</Typography> {/* Set text color to black */}
+            </Box>
+            <Avatar sx={{ width: 30, height: 30, bgcolor: 'black', color: 'white' }}>
+                {auth?.User?.name[0]}
+                {auth?.User?.name.split(' ')[1]?.[0] || ''}
+            </Avatar>
+        </Box>
+    );
 };
 
-export default ChatItem;
+export default Chatitem;

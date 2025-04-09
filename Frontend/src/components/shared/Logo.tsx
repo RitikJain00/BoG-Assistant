@@ -24,6 +24,7 @@ const Logo = () => {
             display: { md: 'block', sm: 'none', xs: 'none' },
             fontWeight: 800,
             fontSize: '1.5rem',
+            color:' rgb(128, 206, 236)',
             textShadow: '2px 2px 20px #000'
           }}
         >

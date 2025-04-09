@@ -4,8 +4,8 @@
 html, body{
   margin: 0;
   padding: 0;
-  background: #05101c;
-  color: white;
+  background: rgb(227, 227, 227);
+  color: rgb(49, 130, 162);
   font-family:"Roboto Slab", serif;
 }
 
@@ -26,5 +26,6 @@ html, body{
 
 .MuiOutlinedInput-input-root.Mui-focused,
 .MuiOutlinedInput-notchedOutline {
-  border-color: white !important;
+  border-color: rgb(11, 11, 11) !important;
+  color: rgb(11, 11, 11) !important;
 }

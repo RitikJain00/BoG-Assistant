@@ -23,8 +23,8 @@ const Header = () => {
                         </>
                     ) : (
                         <>
-                            <NavigationLink to={'/chat'} bg={'#00fffc'} text={'Go to Chat'} textcolor={'black'} />
-                            <NavigationLink to={'/login'} bg={'#00fffc'} text={'Login'} textcolor={'black'} />
+                            <NavigationLink to={'/chat'} bg={'#51538f'} text={'Go to Chat'} textcolor={'white'} />
+                            <NavigationLink to={'/login'} bg={'#51538f'} text={'Login'} textcolor={'white'} />
                             <NavigationLink to={'/signup'} bg={'#51538f'} text={'Signup'} textcolor={'white'} />
                         </>
                     )}

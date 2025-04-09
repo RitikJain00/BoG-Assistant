@@ -73,6 +73,7 @@ const Signup = () => {
                             textAlign="center" 
                             padding={2} 
                             fontWeight={600}
+                            color=" rgb(65, 134, 161)"
                         >
                             Sign-Up
                         </Typography>
@@ -91,8 +92,8 @@ const Signup = () => {
                                 mt: 2, 
                                 width: '400px', 
                                 borderRadius: '5', 
-                                bgcolor: '#00fffc',
-                                ":hover": { bgcolor: 'white', color: 'black' }
+                                bgcolor: ' rgb(128, 206, 236)',
+                                ":hover": { bgcolor: ' rgb(65, 134, 161)', color: 'white' }
                             }} 
                             endIcon={<IoIosLogIn />}
                         >

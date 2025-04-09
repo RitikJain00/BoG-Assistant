@@ -19,12 +19,12 @@ const CustomizedInput: React.FC<Props> = ({ name, type, label, value, onChange }
             fullWidth // Makes input responsive
             value={value}
             onChange={onChange}
-            InputLabelProps={{ style: { color: 'white' } }}
+            InputLabelProps={{ style: { color: 'black' } }}
             InputProps={{ 
                 sx: { 
                     borderRadius: 2, 
                     fontSize: 18, 
-                    color: 'white', 
+                    color: 'black', 
                     backgroundColor: 'rgba(255, 255, 255, 0.1)', 
                     paddingX: 1 
                 } 
