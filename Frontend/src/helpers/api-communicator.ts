@@ -40,6 +40,28 @@ export const sendChatRequest = async (message: string) => {
     }
 };
 
+// export const sendChatRequest = async (message: string) => {
+//     // Predefined responses
+//     const predefinedResponses: { [key: string]: string } = {
+//         "hello": "Hi there! How can I help you?",
+//         "how are you": "I'm just a chatbot, but I'm here to assist you!",
+//         "what is your name": "I'm MNNIT's chatbot, here to answer your queries.",
+//         "bye": "Goodbye! Have a great day! 😊",
+//     };
+
+//     // Check if user message has a predefined response
+//     const lowerCaseMessage = message.toLowerCase();
+//     if (predefinedResponses[lowerCaseMessage]) {
+//         return { role: "assistant", content: predefinedResponses[lowerCaseMessage] };
+//     }
+
+//     // Default response if no predefined response is found
+//     return { role: "assistant", content: "I'm not sure how to respond to that. Can you rephrase?" };
+// };
+
+
+
+
 // Function to fetch user chats
 export const getUserChats = async () => {
     try {
