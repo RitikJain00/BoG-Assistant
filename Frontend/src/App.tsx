@@ -1,6 +1,5 @@
 import Header from './components/header'; // Importing the Header component
 import { Routes, Route } from 'react-router-dom'; // Routes acts as a container, Route defines individual paths
-import Home from './pages/Home'; // Importing the Home page component (not used in Routes)
 import Login from './pages/Login'; // Importing the Login page component
 import Signup from './pages/Signup'; // Importing the Signup page component
 import Chat from './pages/Chat'; // Importing the Chat page component
