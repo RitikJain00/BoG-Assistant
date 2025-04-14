@@ -4,6 +4,8 @@ import CustomizedInput from '../components/shared/CustomizedInput'; // Custom in
 import { IoIosLogIn } from "react-icons/io"; // Login icon from react-icons
 import { toast } from 'react-hot-toast'; // Toast notifications for user feedback
 import { useAuth } from '../context/AuthContext'; // Authentication context
+import { Link } from 'react-router-dom';
+
 
 const Signup = () => {
     const auth = useAuth(); // Access authentication functions from context
@@ -32,7 +34,7 @@ const Signup = () => {
     return (
         <Box width={"100%"} height={"100%"} display="flex" flex={1}>
             {/* Left Section - MNNIT Logo (Visible on medium and larger screens) */}
-            <Box padding={8} mt={8} display={{ md: "flex", sm: "none", xs: "none" }}>
+            <Box padding={8} mt={1} display={{ md: "flex", sm: "none", xs: "none" }}>
                 <img 
                     src="MNNIT_Logo.png" 
                     alt="MNNIT" 
@@ -48,58 +50,109 @@ const Signup = () => {
                 alignItems={"center"} 
                 padding={2} 
                 ml={"auto"} 
-                mt={16}
+                mt={8}
             >
-                <form 
-                    onSubmit={handleSubmit} 
-                    style={{
-                        margin: 'auto', 
-                        padding: '30px', 
-                        boxShadow: "10px 10px 20px #000",
-                        borderRadius: "10px", 
-                        border: "none"
-                    }}
+                            <form 
+                onSubmit={handleSubmit} 
+                style={{
+                    margin: 'auto',
+                    padding: '40px',
+                    borderRadius: '12px',
+                    boxShadow: "10px 10px 20px #000",
+                    width: '100%',
+                    maxWidth: '450px'
+                }}
                 >
-                    <Box 
-                        sx={{ 
-                            display: 'flex', 
-                            flexDirection: 'column', 
-                            justifyContent: 'center'
-                        }}
+                <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    gap: 1,
+                    alignItems: 'center'
+                }}>
+                    {/* Signup Header */}
+                    <Typography 
+                    variant="h4"
+                    sx={{
+                        fontWeight: 700,
+                        color: 'primary.main',
+                        mb: 1,
+                        background: 'linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                    }}
                     >
-                        {/* Signup Header */}
-                        <Typography 
-                            variant="h4" 
-                            textAlign="center" 
-                            padding={2} 
-                            fontWeight={600}
-                            color=" rgb(65, 134, 161)"
-                        >
-                            Sign-Up
-                        </Typography>
+                    Create Account
+                    </Typography>
 
-                        {/* Input Fields */}
-                        <CustomizedInput type="text" name='name' label="Name" />
-                        <CustomizedInput type="email" name='email' label="Email" />
-                        <CustomizedInput type='password' name='password' label='Password' />
+                    {/* Input Fields */}
+                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <CustomizedInput 
+                        type="text" 
+                        name="name" 
+                        label="Full Name"
+                
+                    />
+                    <CustomizedInput 
+                        type="email" 
+                        name="email" 
+                        label="Email Address"
 
-                        {/* Signup Button */}
-                        <Button 
-                            type='submit' 
-                            sx={{
-                                px: 2, 
-                                py: 1, 
-                                mt: 2, 
-                                width: '400px', 
-                                borderRadius: '5', 
-                                bgcolor: ' rgb(128, 206, 236)',
-                                ":hover": { bgcolor: ' rgb(65, 134, 161)', color: 'white' }
-                            }} 
-                            endIcon={<IoIosLogIn />}
-                        >
-                            Sign-up
-                        </Button>
-                    </Box> 
+                    />
+                    <CustomizedInput 
+                        type="password" 
+                        name="password" 
+                        label="Password" 
+
+                    />
+                    </Box>
+
+                    {/* Signup Button */}
+                    <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    size="large"
+                    endIcon={<IoIosLogIn />}
+                    sx={{
+                        mt: 2,
+                        py: 1.5,
+                        borderRadius: '8px',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        background: 'linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)',
+                        '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(58, 123, 213, 0.3)'
+                        },
+                        transition: 'all 0.2s ease'
+                    }}
+                    >
+                    Create Account
+                    </Button>
+
+                    {/* Login Link */}
+                    <Typography
+                    variant="body1"
+                    sx={{
+                        mt: 2,
+                        color: 'text.secondary',
+                        '& a': {
+                        color: 'secondary.main',
+                        fontWeight: 600,
+                        textDecoration: 'none',
+                        ml: 1,
+                        '&:hover': {
+                            textDecoration: 'underline',
+                            textUnderlineOffset: '3px'
+                        }
+                        },
+                        transition: 'all 0.2s ease'
+                    }}
+                    >
+                    Already have an account?
+                    <Link to="/login">Login</Link>
+                    </Typography>
+                </Box>
                 </form>
             </Box>
         </Box>

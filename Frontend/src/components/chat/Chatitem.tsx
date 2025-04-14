@@ -1,5 +1,4 @@
 import { Box, Avatar, Typography } from '@mui/material';
-import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistant' }) => {
@@ -9,7 +8,7 @@ const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistan
         // Assistant's message (icon on left)
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 1 }}>
             <Avatar sx={{ width: 30, height: 30 }}>
-                <img src="openai.png" width="30px" alt="AI" />
+                <img src="mnnit.png" width="30px" alt="AI" />
             </Avatar>
             <Box
                 sx={{
@@ -39,9 +38,24 @@ const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistan
             >
                 <Typography fontSize="16px" color="black">{content}</Typography> {/* Set text color to black */}
             </Box>
-            <Avatar sx={{ width: 30, height: 30, bgcolor: 'black', color: 'white' }}>
-                {auth?.User?.name[0]}
-                {auth?.User?.name.split(' ')[1]?.[0] || ''}
+            <Avatar 
+            sx={{ 
+                width: 30, 
+                height: 30, 
+                bgcolor: auth?.User?.name ? 'black' : 'grey.500',
+                color: 'white',
+                fontSize: '0.8rem',
+                fontWeight: 'bold'
+            }}
+            >
+            {auth?.User?.name ? (
+                <>
+                {auth.User.name[0]}
+                {auth.User.name.split(' ')[1]?.[0]}
+                </>
+            ) : (
+                'U' // Default 'U' for User
+            )}
             </Avatar>
         </Box>
     );

@@ -5,6 +5,7 @@ import { red } from '@mui/material/colors';
 import Chatitem from '../components/chat/Chatitem';
 import { IoMdSend } from 'react-icons/io';
 import toast from 'react-hot-toast';
+import { CircularProgress } from '@mui/material';
 
 type Message = {
     role: "user" | "assistant";
@@ -83,20 +84,40 @@ const Chat = () => {
                     flexDirection: 'column', 
                     mx: 3 
                 }}>
-                    <Avatar sx={{ 
-                        mx: 'auto', 
-                        my: 2, 
-                        backgroundColor: "skyblue",
-                        color: "black", 
-                        fontWeight: 700 
-                    }}>
-                        {auth?.User?.name[0]}{auth?.User?.name.split(" ")[1][0]}
+                  <Avatar 
+                    sx={{ 
+                        mx: 'auto',
+                        my: 2,
+                        width: 60,
+                        height: 60,
+                        bgcolor: 'primary.light',
+                        color: 'common.white',
+                        fontWeight: 700,
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                        '& img': {
+                        width: '80%',
+                        height: '80%',
+                        objectFit: 'contain'
+                        }
+                    }}
+                    >
+                    <img 
+                        src="mnnit.png" 
+                        alt="MNNIT Logo" 
+                        style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain'
+                        }}
+                    />
                     </Avatar>
-                    <Typography sx={{ mx: 'auto', fontFamily: 'work sans', color: "black" }}>
+                    <Typography variant="h6" sx={{ mx: 'auto', fontFamily: 'work sans', color: "black" }}>
                         I am MNNIT Chatbot
                     </Typography>
-                    <Typography sx={{ mx: 'auto', fontFamily: 'work sans', color: "black", my: 4, p: 3 }}>
-                        You can know all about MNNIT Past BOG Meetings
+
+                    <Typography sx={{ mx: 'auto', fontFamily: 'work sans', color: "black", my: 4, px: 3 }}>
+                    This official chatbot provides authenticated information about MNNIT's past Board of Governors meetings, including agendas, resolutions, and attendance records. For optimal results, please phrase questions clearly regarding specific meetings or topics.
                     </Typography>
                     <Button 
                         onClick={handleDeleteChats}
@@ -129,22 +150,30 @@ const Chat = () => {
                 </Typography>
 
                 {/* Chat messages */}
-                <Box sx={{
-                    width: "100%", 
-                    height: "60vh", 
-                    borderRadius: 3, 
-                    mx: 'auto',
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    gap: 2,
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                }}>
-                    {chatMessages.map((chat, index) => (
-                        <Chatitem content={chat.content} role={chat.role} key={index} />
-                    ))}
-                </Box>
+              <Box sx={{
+                width: "100%", 
+                height: "60vh", 
+                borderRadius: 3, 
+                mx: 'auto',
+                display: 'flex', 
+                flexDirection: 'column',
+                gap: 2,
+                overflowY: 'auto',
+                overflowX: 'hidden'
+            }}>
+                {chatMessages.map((chat, index) => (
+                    <Chatitem content={chat.content} role={chat.role} key={index} />
+                ))}
+                
+                {/* Add this loader */}
+                {isLoading && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+                        <CircularProgress color="primary" />
+                    </Box>
+                )}
+            </Box>
 
+    
                 {/* Input area */}
                 <Box sx={{
                     width: "100%", 
@@ -157,6 +186,7 @@ const Chat = () => {
                     <input
                         ref={inputRef}
                         type="text"
+                        onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                         style={{
                             width: "100%", 
                             backgroundColor: "transparent",
@@ -167,7 +197,6 @@ const Chat = () => {
                             color: "black", 
                             fontSize: '20px'
                         }}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
                     />
                     <IconButton 
                         onClick={handleSubmit} 
