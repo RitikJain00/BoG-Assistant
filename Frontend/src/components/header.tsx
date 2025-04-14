@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { AppBar, Toolbar, Box } from '@mui/material';
 import Logo from './shared/Logo';
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +25,6 @@ const Header = () => {
                         <>
                             <NavigationLink to={'/chat'} bg={'#51538f'} text={'Go to Chat'} textcolor={'white'} />
                             <NavigationLink to={'/login'} bg={'#51538f'} text={'Login'} textcolor={'white'} />
-                            <NavigationLink to={'/signup'} bg={'#51538f'} text={'Signup'} textcolor={'white'} />
                         </>
                     )}
                 </Box>     

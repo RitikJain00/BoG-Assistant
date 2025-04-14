@@ -1,5 +1,4 @@
 import { Typography, Box } from '@mui/material';
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Logo = () => {
@@ -24,8 +23,8 @@ const Logo = () => {
             display: { md: 'block', sm: 'none', xs: 'none' },
             fontWeight: 800,
             fontSize: '1.5rem',
-            color:' rgb(128, 206, 236)',
-            textShadow: '2px 2px 20px #000'
+            color: 'primary.main',
+            textShadow: 'linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%)'
           }}
         >
           MNNIT Chatbot
