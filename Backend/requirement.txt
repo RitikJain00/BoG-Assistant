@@ -1,0 +1,24 @@
+# Core Libraries
+fastapi>=0.68.0
+uvicorn>=0.15.0
+python-multipart>=0.0.5  # Required for form data
+pydantic>=1.8.0
+
+# LangChain & NLP
+langchain>=0.1.0
+langchain-community>=0.0.1
+langchain-core>=0.1.0
+sentence-transformers>=2.2.2
+faiss-cpu>=1.7.2  # Use faiss-gpu if you have CUDA
+
+# Document Processing
+python-docx>=0.8.11
+pdfplumber>=0.9.0
+tqdm>=4.65.0  # Progress bars
+
+# Hugging Face
+transformers>=4.30.0
+datasets>=2.0.0
+
+# Optional (if using Together AI)
+requests>=2.28.0
