@@ -35,7 +35,7 @@ const Chat = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch("http://localhost:8000/query", {
+            const response = await fetch("http://localhost:5000/query", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -53,7 +53,8 @@ const Chat = () => {
             }
 
             const data = await response.json();
-            setChatMessages(prev => [...prev, { role: "assistant", content: data.response }]);
+            console.log(data)
+            setChatMessages(prev => [...prev, { role: "assistant", content: data.answer }]);
         } catch (error) {
             console.error("Error:", error);
             toast.error("Failed to get response");
@@ -65,6 +66,11 @@ const Chat = () => {
             setIsLoading(false);
         }
     };
+
+
+
+ 
+    
 
     const handleDeleteChats = () => {
         setChatMessages([]);
