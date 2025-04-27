@@ -1,20 +1,29 @@
 import os
 import re
+import nltk
+import wordninja
+import fitz  # PyMuPDF for PDF parsing
 from tqdm import tqdm
 from docx import Document as DocxDocument
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+# Ensure sentence tokenizer is available
+nltk.download('punkt')
+from nltk.tokenize import sent_tokenize
 
 # Configuration
 BASE_VECTOR_STORE = "vector_store"
 DATA_FOLDER = "data"
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-CHUNK_SIZE = 500
-MIN_CHUNK_LENGTH = 100
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"  # 🔁 Changed model
+CHUNK_SIZE = 1600  # ⬆ Increased chunk size
+CHUNK_OVERLAP = 200
+MIN_CHUNK_LENGTH = 300
+MAX_CHUNK_LENGTH = 2000
 COMBINED_INDEX_NAME = "db_faiss"
 
-# ✅ Clean text
 def clean_text(text):
     if not text:
         return ""
@@ -26,7 +35,19 @@ def clean_text(text):
     text = re.sub(r'_{2,}', '', text)
     return text.strip()
 
-# ✅ Detect item number and resolution
+def fix_spacing_in_chunk(chunk):
+    if " " not in chunk:
+        return " ".join(wordninja.split(chunk))
+    words = chunk.split()
+    fixed_words = []
+    for word in words:
+        if len(word) > 15 and word.isalpha():
+            split = wordninja.split(word)
+            fixed_words.extend(split if len(split) > 1 else [word])
+        else:
+            fixed_words.append(word)
+    return " ".join(fixed_words)
+
 def detect_item_and_resolution(text):
     item_match = re.search(r'Item No\.\s*\d+', text, re.IGNORECASE)
     resolution_match = re.search(r'Resolution with respect to[:\-]?\s*(.+)', text, re.IGNORECASE)
@@ -35,72 +56,108 @@ def detect_item_and_resolution(text):
         resolution_match.group(1).strip() if resolution_match else None
     )
 
-# ✅ Process DOCX and chunk per item
-def process_docx_by_items(docx_path):
+def split_text_into_chunks(text, metadata):
+    sentences = sent_tokenize(text)
+    chunks = []
+    current_chunk = ""
+
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+
+        if len(current_chunk) + len(sentence) + 1 <= CHUNK_SIZE:
+            current_chunk += " " + sentence
+        else:
+            fixed_chunk = fix_spacing_in_chunk(current_chunk.strip())
+            if MIN_CHUNK_LENGTH <= len(fixed_chunk) <= MAX_CHUNK_LENGTH:
+                chunks.append(Document(page_content=fixed_chunk, metadata=metadata))
+            current_chunk = sentence
+
+    if current_chunk.strip():
+        fixed_chunk = fix_spacing_in_chunk(current_chunk.strip())
+        if MIN_CHUNK_LENGTH <= len(fixed_chunk) <= MAX_CHUNK_LENGTH:
+            chunks.append(Document(page_content=fixed_chunk, metadata=metadata))
+
+    return chunks
+
+def process_docx_paragraphs(docx_path):
     doc = DocxDocument(docx_path)
     file_name = os.path.basename(docx_path)
 
-    chunks = []
-    current_item_no = None
-    current_resolution = None
-    current_text = []
+    all_chunks = []
+    buffer = ""
+    buffer_meta = {"source": file_name}
+    total_length = 0
 
-    def store_chunk():
-        nonlocal current_text
-        if current_text:
-            text_block = "\n".join(current_text).strip()
-            if len(text_block) >= MIN_CHUNK_LENGTH:
-                metadata = {
-                    "source": file_name,
-                    "item_no": current_item_no,
-                    "resolution": current_resolution
-                }
-                chunks.append(Document(page_content=text_block, metadata=metadata))
-            current_text = []
-
-    # Process paragraphs
     for para in doc.paragraphs:
         cleaned = clean_text(para.text)
         if not cleaned:
             continue
 
         item, resolution = detect_item_and_resolution(cleaned)
+        meta = {
+            "source": file_name,
+            "item_no": item,
+            "resolution": resolution
+        }
 
-        if item:
-            store_chunk()
-            current_item_no = item
-            current_resolution = resolution if resolution else current_resolution
-        elif resolution:
-            current_resolution = resolution
+        if len(buffer) + len(cleaned) < CHUNK_SIZE:
+            buffer += " " + cleaned
+            total_length += len(cleaned)
+            if item:
+                buffer_meta["item_no"] = item
+            if resolution:
+                buffer_meta["resolution"] = resolution
+        else:
+            all_chunks.extend(split_text_into_chunks(buffer.strip(), buffer_meta))
+            buffer = cleaned
+            buffer_meta = meta
+            total_length = len(cleaned)
 
-        current_text.append(cleaned)
+    if buffer.strip():
+        all_chunks.extend(split_text_into_chunks(buffer.strip(), buffer_meta))
 
-    # Process tables
     for table in doc.tables:
         for row in table.rows:
             row_text = " | ".join(clean_text(cell.text) for cell in row.cells if clean_text(cell.text))
             if row_text:
-                current_text.append(row_text)
+                meta = {"source": file_name}
+                all_chunks.extend(split_text_into_chunks(row_text, meta))
 
-    # Final flush
-    store_chunk()
+    return all_chunks
 
-    return chunks
+def process_pdf_text(pdf_path):
+    doc = fitz.open(pdf_path)
+    file_name = os.path.basename(pdf_path)
+    all_chunks = []
+    full_text = ""
 
-# ✅ Store vectors
-def store_per_doc_embeddings():
-    embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    files = [f for f in os.listdir(DATA_FOLDER) if f.lower().endswith('.docx')]
+    for page in doc:
+        text = clean_text(page.get_text("text"))
+        full_text += " " + text
 
-    if not files:
-        print("No DOCX files found.")
-        return
+    meta = {"source": file_name}
+    all_chunks.extend(split_text_into_chunks(full_text.strip(), meta))
+    return all_chunks
 
+def store_per_doc_embeddings(embedder):
+    files = [f for f in os.listdir(DATA_FOLDER) if f.lower().endswith(('.docx', '.pdf'))]
     all_chunks = []
 
-    for file in tqdm(files, desc="Processing DOCX Files"):
+    if not files:
+        print("No supported files found.")
+        return
+
+    for file in tqdm(files, desc="Processing Files"):
         file_path = os.path.join(DATA_FOLDER, file)
-        chunks = process_docx_by_items(file_path)
+
+        if file.lower().endswith('.docx'):
+            chunks = process_docx_paragraphs(file_path)
+        elif file.lower().endswith('.pdf'):
+            chunks = process_pdf_text(file_path)
+        else:
+            continue
 
         if not chunks:
             print(f"⚠️ No valid chunks for {file}")
@@ -110,26 +167,31 @@ def store_per_doc_embeddings():
 
         try:
             vector_store = FAISS.from_documents(chunks, embedder)
+            doc_vector_dir = os.path.join(BASE_VECTOR_STORE, os.path.splitext(file)[0])
+            os.makedirs(doc_vector_dir, exist_ok=True)
+            vector_store.save_local(doc_vector_dir)
+            print(f"✅ Indexed {len(chunks)} chunks from {file}")
         except Exception as e:
             print(f"❌ Failed to embed/index {file}: {e}")
-            continue
 
-        doc_vector_dir = os.path.join(BASE_VECTOR_STORE, os.path.splitext(file)[0])
-        os.makedirs(doc_vector_dir, exist_ok=True)
-        vector_store.save_local(doc_vector_dir)
-        print(f"✅ Stored FAISS index for {file} in {doc_vector_dir}")
+    return all_chunks
 
-    # ✅ Store combined db_faiss
-    if all_chunks:
-        try:
-            print("\n💾 Saving combined vector store: db_faiss...")
-            combined_store = FAISS.from_documents(all_chunks, embedder)
-            combined_path = os.path.join(BASE_VECTOR_STORE, COMBINED_INDEX_NAME)
-            os.makedirs(combined_path, exist_ok=True)
-            combined_store.save_local(combined_path)
-            print(f"✅ Stored combined FAISS index at: {combined_path}")
-        except Exception as e:
-            print(f"❌ Failed to store combined FAISS index: {e}")
+def store_combined_embeddings(all_chunks, embedder):
+    if not all_chunks:
+        print("❌ No chunks to combine.")
+        return
+    try:
+        combined_index = FAISS.from_documents(all_chunks, embedder)
+        combined_index.save_local(os.path.join(BASE_VECTOR_STORE, COMBINED_INDEX_NAME))
+        print(f"✅ Combined index saved to '{COMBINED_INDEX_NAME}'")
+    except Exception as e:
+        print(f"❌ Failed to create combined FAISS index: {e}")
 
 if __name__ == "__main__":
-    store_per_doc_embeddings()
+    embedder = HuggingFaceEmbeddings(
+        model_name=EMBEDDING_MODEL,
+        encode_kwargs={"normalize_embeddings": True}
+    )
+
+    all_chunks = store_per_doc_embeddings(embedder)
+    store_combined_embeddings(all_chunks, embedder)
