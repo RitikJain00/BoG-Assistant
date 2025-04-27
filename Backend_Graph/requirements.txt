@@ -1,4 +1,0 @@
-Flask
-neo4j
-sentence-transformers
-groq
