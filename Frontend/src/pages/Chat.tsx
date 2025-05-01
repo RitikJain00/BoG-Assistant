@@ -78,7 +78,7 @@ const Chat = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', flex: 1, width: '100%', height: '100%', mt: 3, gap: 3 }}>
+        <Box sx={{ display: 'flex', flex: 1, width: '100%', height: '120%', mt: 3, gap: 3 }}>
             {/* Sidebar */}
             <Box sx={{ display: { md: 'flex', xs: 'none', sm: 'none' }, flex: 0.2, flexDirection: 'column' }}>
                 <Box sx={{ 
@@ -186,7 +186,7 @@ const Chat = () => {
                     borderRadius: 8, 
                     backgroundColor: "rgb(251, 252, 252)",
                     display: 'flex', 
-                    margin: 'auto',
+                    marginBottom: '0',
                     border: '1px solid #ccc'
                 }}>
                     <input

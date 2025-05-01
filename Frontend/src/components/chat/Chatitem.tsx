@@ -1,12 +1,27 @@
 import { Box, Avatar, Typography } from '@mui/material';
+import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistant' }) => {
     const auth = useAuth();
 
+    const prettifyText = (text: string): string => {
+        let formatted = text.replace(/\n\s*\n/g, '</p><p>'); // Double newlines = new paragraph
+        formatted = formatted.replace(/\n/g, '<br/>');        // Single newline = line break
+        formatted = formatted.replace(/(?:^|\n)- (.*?)(?=\n|$)/g, '<li>$1</li>');
+      
+        if (formatted.includes('<li>')) {
+          formatted = `<ul>${formatted}</ul>`;
+        }
+      
+        return `<p>${formatted}</p>`;
+      };
+      
+
     return role === 'assistant' ? (
         // Assistant's message (icon on left)
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 1 }}>
+        <Box className="bot-message"
+        sx={{ display: 'flex', alignItems: 'center', gap: 2, my: 1 }}>
             <Avatar sx={{ width: 30, height: 30 }}>
                 <img src="mnnit.png" width="30px" alt="AI" />
             </Avatar>
@@ -20,7 +35,12 @@ const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistan
                     boxShadow: '0px 1px 3px rgba(0,0,0,0.2)',
                 }}
             >
-                <Typography fontSize="16px" color="black">{content}</Typography>
+               <Typography
+                  fontSize="16px"
+                    color="black"
+                    dangerouslySetInnerHTML={{ __html: prettifyText(content) }}
+/>
+
             </Box>
         </Box>
     ) : (
@@ -38,24 +58,8 @@ const Chatitem = ({ content, role }: { content: string; role: 'user' | 'assistan
             >
                 <Typography fontSize="16px" color="black">{content}</Typography> {/* Set text color to black */}
             </Box>
-            <Avatar 
-            sx={{ 
-                width: 30, 
-                height: 30, 
-                bgcolor: auth?.User?.name ? 'black' : 'grey.500',
-                color: 'white',
-                fontSize: '0.8rem',
-                fontWeight: 'bold'
-            }}
-            >
-            {auth?.User?.name ? (
-                <>
-                {auth.User.name[0]}
-                {auth.User.name.split(' ')[1]?.[0]}
-                </>
-            ) : (
-                'U' // Default 'U' for User
-            )}
+            <Avatar sx={{ width: 30, height: 30, bgcolor: 'black', color: 'white' }}>
+            {auth?.User?.name[0] || 'U'}  {/* Safely extracts first letter or defaults to 'U' */}
             </Avatar>
         </Box>
     );
