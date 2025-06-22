@@ -2,7 +2,7 @@
 
 An AI-powered chatbot that retrieves information from MNNIT Allahabad Board of Governors (BoG) meeting documents using Neo4j, RAG (Retrieval-Augmented Generation), and Groq's Llama 3 LLM.
 
-![Chatbot Screenshot](assets/chatbot-ui.png)
+![Chatbot Screenshot](assets/chatbot.png)
 
 ---
 
@@ -49,7 +49,7 @@ Unlike basic search tools, this chatbot performs:
 
 | Layer                           | Technology                              |
 | ------------------------------- | --------------------------------------- |
-| Frontend                        | Streamlit                               |
+| Frontend                        | React + TypeScript                      |
 | Backend                         | Python (Flask or FastAPI), Google Colab |
 | Knowledge Graph + Vector Search | Neo4j Aura DB                           |
 | LLM                             | Groq (Llama 3 70B)                      |
@@ -66,17 +66,26 @@ Unlike basic search tools, this chatbot performs:
 
 ### 📌 Chatbot Interface
 
-![UI](assets/chat-ui.png)
+![UI](assets/welcome.png)
+![UI](assets/Interface.png)
+
 
 ### 🧠 Neo4j Graph View
 
-![Graph View](assets/neo4j-chunks.png)
+![Graph View](assets/neo4jOverview.png)
+![Graph View](assets/chunks.png)
 
-### 🏗️ Architecture
 
-![Architecture](assets/architecture.png)
+### 🏗️ WorkFlow
+
+![Work Flow](assets/workflow.png)
+
 
 ---
 
+## 🙌 Made With Love By Ritik Jain
+
+  
+🔗 [LinkedIn](https://www.linkedin.com/in/ritikjain00/) | ✉️ ritikjain590@gmail.com
 
 
